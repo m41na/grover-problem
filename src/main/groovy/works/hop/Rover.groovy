@@ -1,101 +1,136 @@
 package works.hop
 
+import java.util.regex.Pattern
+
+enum Dir {
+    N, E, S, W
+}
+
 class Rover {
 
     int x
     int y
-    String dir
+    Dir dir
+    int mx
+    int my
 
-    Rover(String input){
-        if(input == null) {
-            throw new RuntimeException("Expected input in the form 'x y dir'")
+    Rover(String plateau, String input) {
+        //starting position
+        if (input == null || input.trim().isEmpty()) {
+            throw new RuntimeException("Expected valid starting positional in the form 'x y dir'")
         }
-        var split = input.trim().split(" ")
-        if (split.length != 3){
-            throw new RuntimeException("Expected input in the form 'x y dir'")
+        if (!Pattern.compile("\\d \\d [NEWS]").matcher(input).matches()) {
+            throw new RuntimeException("Expected valid starting positional in the form 'x y dir'")
         }
-        this.x = Integer.parseInt(split[0])
-        this.y = Integer.parseInt(split[1])
-        this.dir = split[2]
+        var pos = input.split(" ")
+        this.x = Integer.parseInt(pos[0])
+        this.y = Integer.parseInt(pos[1])
+        this.dir = Dir.valueOf(pos[2])
+
+        //plateau size
+        if (plateau == null || plateau.trim().isEmpty()) {
+            throw new RuntimeException("Expected valid plateau size in the form 'max-x max-y'")
+        }
+        if (!Pattern.compile("\\d \\d").matcher(plateau).matches()) {
+            throw new RuntimeException("Expected valid plateau size in the form 'max-x max-y'")
+        }
+        var size = plateau.split(" ")
+        this.mx = Integer.parseInt(size[0])
+        this.my = Integer.parseInt(size[1])
     }
 
-    String position(){
+    String position() {
         return String.format("%d %d %s", this.x, this.y, this.dir)
     }
 
-    void operate(String instruction){
-        switch (instruction){
-            case "L":
-                turnLeft();
-                break
-            case "R":
-                turnRight()
-                break
-            case "M":
-                moveForward()
-                break
-            default:
-                printf("ignoring %s instruction%n", instruction)
-                break;
+    void operate(String input) {
+        if (input == null) {
+            printf("ignoring %s instruction%n", input)
+        } else {
+            var instructions = input.trim().split("")
+            for (instruction in instructions) {
+                switch (instruction) {
+                    case "L":
+                        turnLeft()
+                        break
+                    case "R":
+                        turnRight()
+                        break
+                    case "M":
+                        moveForward()
+                        break
+                    default:
+                        printf("ignoring %s instruction%n", instruction)
+                        break
+                }
+            }
         }
     }
 
-    void turnLeft(){
-        switch (this.dir){
-            case "N":
-                this.dir = "W"
+    void turnLeft() {
+        switch (this.dir) {
+            case Dir.N:
+                this.dir = Dir.W
                 break
-            case "W":
-                this.dir = "S"
+            case Dir.W:
+                this.dir = Dir.S
                 break
-            case "S":
-                this.dir = "E"
+            case Dir.S:
+                this.dir = Dir.E
                 break
-            case "E":
-                this.dir = "N"
+            case Dir.E:
+                this.dir = Dir.N
                 break
             default:
-                printf("ignoring turn instruction")
+                printf("ignoring instruction to turn left")
                 break
         }
     }
 
     void turnRight() {
         switch (this.dir) {
-            case "N":
-                this.dir = "E"
+            case Dir.N:
+                this.dir = Dir.E
                 break
-            case "E":
-                this.dir = "S"
+            case Dir.E:
+                this.dir = Dir.S
                 break
-            case "S":
-                this.dir = "W"
+            case Dir.S:
+                this.dir = Dir.W
                 break
-            case "W":
-                this.dir = "N"
+            case Dir.W:
+                this.dir = Dir.N
                 break
             default:
-                printf("ignoring turn instruction")
+                printf("ignoring instruction to turn right")
                 break
         }
     }
 
     void moveForward() {
         switch (this.dir) {
-            case "N":
-                this.y++
+            case Dir.N:
+                if(this.y + 1 <= this.my) {
+                    this.y++
+                }
                 break
-            case "W":
-                this.x--
+            case Dir.W:
+                if(this.x - 1 >= 0) {
+                    this.x--
+                }
                 break
-            case "S":
-                this.y--
+            case Dir.S:
+                if(this.y - 1 >= 0) {
+                    this.y--
+                }
                 break
-            case "E":
-                this.x++
+            case Dir.E:
+                if(this.x + 1 <= this.mx) {
+                    this.x++
+                }
                 break
             default:
-                printf("ignoring move instruction")
+                printf("ignoring instruction to move")
                 break
         }
     }
