@@ -1,4 +1,4 @@
-package works.hop
+package works.hop.mars.state
 
 import works.hop.mars.Dir
 import works.hop.mars.state.Rover

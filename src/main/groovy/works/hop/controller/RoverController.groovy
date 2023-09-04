@@ -69,6 +69,9 @@ class RoverController {
     ResponseEntity<String> remove(@PathVariable UUID roverId) {
         repo.remove(roverId)
         Rover rover = rovers.remove(roverId)
-        return ResponseEntity.accepted().body(rover.position())
+        if (rover != null) {
+            return ResponseEntity.accepted().body(rover.position())
+        }
+        return ResponseEntity.accepted().body("")
     }
 }

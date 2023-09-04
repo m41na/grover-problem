@@ -15,7 +15,7 @@ class Rover {
         if (input == null || input.trim().isEmpty()) {
             throw new RuntimeException("Expected valid starting positional in the form 'x y dir'")
         }
-        if (!Pattern.compile("\\d \\d [NEWS]").matcher(input).matches()) {
+        if (!Pattern.compile("\\d+ \\d+ [NEWS]").matcher(input).matches()) {
             throw new RuntimeException("Expected valid starting positional in the form 'x y dir'")
         }
         var pos = input.split(" ")
@@ -25,7 +25,7 @@ class Rover {
         if (plateau == null || plateau.trim().isEmpty()) {
             throw new RuntimeException("Expected valid plateau size in the form 'max-x max-y'")
         }
-        if (!Pattern.compile("\\d \\d").matcher(plateau).matches()) {
+        if (!Pattern.compile("\\d+ \\d+").matcher(plateau).matches()) {
             throw new RuntimeException("Expected valid plateau size in the form 'max-x max-y'")
         }
         var size = plateau.split(" ")
