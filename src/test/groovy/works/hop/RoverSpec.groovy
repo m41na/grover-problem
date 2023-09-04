@@ -1,6 +1,7 @@
 package works.hop
 
-import works.hop.state.Rover
+import works.hop.mars.Dir
+import works.hop.mars.state.Rover
 import spock.lang.Specification
 
 class RoverSpec extends Specification{

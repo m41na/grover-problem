@@ -1,6 +1,6 @@
-package works.hop.state
+package works.hop.mars.state
 
-import works.hop.Dir
+import works.hop.mars.Dir
 
 abstract class State {
 
