@@ -1,12 +1,41 @@
 pipeline {
     agent {
-        docker { image 'node:16-alpine' }
+        docker { image 'gradle:8.3.0-jdk17' }
     }
 
     stages {
-        stage('Test') {
+        stage('Checkout') {
             steps {
-                sh 'node --version'
+                git branch: 'main', url: 'https://github.com/m41na/grover-problem'
+            }
+        }
+
+        stage('Build and Test') {
+            steps {
+                sh 'ls -ltr'
+                //build project and create a war file
+                sh 'gradle clean build'
+            }
+        }
+
+        stage('Static Code Analysis') {
+            environment {
+                SONAR_URL = 'http://localhost:9000'
+            }
+            steps {
+                withCredentials([string(credentialsId: 'sonarqube', variable: 'SONAR_AUTH_TOKEN')]){
+                    sh 'gradle sonar -Dsonar.host.url=${SONAR_URL} -Dsonar.verbose=true -Dsonar.token=${SONAR_AUTH_TOKEN}'
+                }
+            }
+        }
+
+        stage('Build and Push Docker Image') {
+            environment {
+                DOCKER_IMAGE = 'm41na/grover-problem-cicd:${BUILD_NUMBER}'
+                REGISTRY_CREDENTIALS = credentials('docker-creds')
+            }
+            steps {
+                sh 'echo looking good!'
             }
         }
     }
